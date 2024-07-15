@@ -11,7 +11,7 @@
 - `tqdm` 库
 - `Pillow` 库
 - `marker-pdf` 库
-- `libgl1-mesa-glx` 软件包
+- `libgl1-mesa-glx` 软件包。等等
 
 你可以使用pip安装所需的库：
 
