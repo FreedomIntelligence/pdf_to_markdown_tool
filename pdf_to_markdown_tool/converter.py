@@ -128,11 +128,11 @@ def collect_all_target_pdf(base_path,output_dir,tag_name):
 
 if __name__ == '__main__':
 '''
-    sub_dir_names_1 = ['6000-6999', '26000-26999']
+    sub_dir_names = []
 
-    glob(os.path.join(BASE_INPUT_PATH,'*-*'))
+    glob(os.path.join())
 
-    for sub_dir_name in sub_dir_names_1:
+    for sub_dir_name in sub_dir_names:
         logger.info(f'sub_dir is {sub_dir_name}')
         base_path = os.path.join(BASE_INPUT_PATH,sub_dir_name)
         output_dir = os.path.join(BASE_OUTPUT_PATH,sub_dir_name)
