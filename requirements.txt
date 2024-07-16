@@ -32,7 +32,6 @@ opencv-python==4.10.0.84
 packaging==24.1
 pdftext==0.3.10
 pillow==10.4.0
-pip==24.0
 psutil==6.0.0
 pydantic==2.8.2
 pydantic_core==2.20.1
