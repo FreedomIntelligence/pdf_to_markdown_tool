@@ -26,15 +26,18 @@ pip install libgl1-mesa-glx
 pip install marker-pdf
 ```
 
-通过手动设置huggingface加载镜像
- ```bash
-export HF_ENDPOINT=https://hf-mirror.com
+## 位置设置
+```bash
+os.environ["HF_DATASETS_CACHE"] = "xxx/xxx/xxx"       #指定了 Hugging Face Datasets 库缓存数据集的位置
+os.environ["HF_HOME"] = "xxx/xxx/xxx"                 #指定了 Hugging Face 库的主目录
+os.environ["HUGGINGFACE_HUB_CACHE"] = "xxx/xxx/xxx"   #指定了 Hugging Face Hub 库缓存模型和数据集的位置
+os.environ["TRANSFORMERS_CACHE"] = "xxx/xxx/xxx"      #指定了 Hugging Face Transformers 库缓存模型的位置。
+os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"   #指定了 Hugging Face 库访问模型和数据集的服务器地址
+
+base_path = '/xxx/xxx/'                               #指定存放 PDF 文件位置的地址
+output_dir = '/xxx/xxx'                               #指定存放 Markdown文件、out_meta、image文件
 ```
 
-## 位置设置
-完成`HF_DATASETS_CACHE`，`HF_HOME`，`HUGGINGFACE_HUB_CACHE`，`TRANSFORMERS_CACHE`，`HF_ENDPOINT`
-
-这些指定位置以及你所要转换PDF文件的地址和转换完成后的输出地址。
 
 ## 参数调整
 在`convert`函数`max_pages`中，可以设置最大转换页数。`langs`设置识别语言。`start_page`设置从第几页开始
