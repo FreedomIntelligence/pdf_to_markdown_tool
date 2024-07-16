@@ -13,7 +13,13 @@
 - `marker-pdf` 库
 - `libgl1-mesa-glx` 软件包。等等
 
-你可以使用pip安装所需的库：
+python 3.11（主要和torch，numpy等版本适配即可）
+
+requirements.txt
+
+建议不要直接pip -r，先搭建pytorch环境，其他包如flask，scapy手动装，没有多少
+
+可以使用pip -安装所需的库：
 
 ```bash
 pip install libgl1-mesa-glx
