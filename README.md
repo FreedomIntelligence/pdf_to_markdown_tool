@@ -17,7 +17,7 @@ python 3.11（主要和torch，numpy等版本适配即可）
 
 requirements.txt
 
-建议不要直接pip -r，先搭建pytorch环境，其他包如flask，scapy手动装，没有多少
+建议先不要直接pip -r，先搭建pytorch环境，其他包如flask，scapy手动装，没有多少
 
 可以使用pip -安装所需的库：
 
