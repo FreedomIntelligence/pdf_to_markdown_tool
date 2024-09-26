@@ -22,7 +22,8 @@ requirements.txt
 如下：
 
 ```bash
-apt install libgl1-mesa-glx
+sudo apt update
+sudo apt install libgl1-mesa-glx
 pip install marker-pdf
 ```
 
