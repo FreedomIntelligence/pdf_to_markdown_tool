@@ -1,3 +1,7 @@
+import warnings
+
+# 忽略特定的 FutureWarning
+warnings.filterwarnings("ignore", category=FutureWarning, message=".*image_processor_class.*")
 import os
 import re
 import json
@@ -8,22 +12,21 @@ from marker.convert import convert_single_pdf
 from marker.output import markdown_exists, save_markdown
 from marker.models import load_all_models
 from PIL import Image
-import concurrent.futures
 import logging
 import base64
-import argparse
 from loguru import logger
+import concurrent.futures
 
 # 设置环境变量
-os.environ["HF_DATASETS_CACHE"] = "xxx/xxx/xxx"     #指定了 Hugging Face Datasets 库缓存数据集的位置
-os.environ["HF_HOME"] = "xxx/xxx/xxx"               #指定了 Hugging Face 库的主目录
-os.environ["HUGGINGFACE_HUB_CACHE"] = "xxx/xxx/xxx" #指定了 Hugging Face Hub 库缓存模型和数据集的位置
-os.environ["TRANSFORMERS_CACHE"] = "xxx/xxx/xxx"    #指定了 Hugging Face Transformers 库缓存模型的位置。
-os.environ["HF_ENDPOINT"] = "https://hf-mirror.com" #指定了 Hugging Face 库访问模型和数据集的服务器地址
+os.environ["HF_DATASETS_CACHE"] = "./cache_dir"     # 指定 Hugging Face Datasets 库缓存数据集的位置
+os.environ["HF_HOME"] = "./cache_dir"               # 指定 Hugging Face 库的主目录
+os.environ["HUGGINGFACE_HUB_CACHE"] = "./cache_dir/" # 指定 Hugging Face Hub 库缓存模型和数据集的位置
+os.environ["TRANSFORMERS_CACHE"] = "./cache_dir/"    # 指定 Hugging Face Transformers 库缓存模型的位置。
+os.environ["HF_ENDPOINT"] = "https://hf-mirror.com" # 指定 Hugging Face 库访问模型和数据集的服务器地址
 
 # 定义路径
-base_path = 'xxx/xxx/xxx'
-output_dir = 'xxx/xxx/xxx'
+base_path = '/mnt/workspace/XXX'
+output_dir = '/mnt/workspace/output'
 
 # 加载所有模型
 model_lst = load_all_models()
@@ -48,7 +51,7 @@ def structure_markdown(markdown_text):
 
     return structured_data
 
-def convert(pdf_file_path,output_dir):
+def convert(pdf_file_path):
     try:
         # 进行pdf到markdown的转化逻辑，调用convert_single_pdf函数来处理单个PDF文件
         result = convert_single_pdf(pdf_file_path, model_lst, max_pages=10, langs=['zh', 'en'], batch_multiplier=1, start_page=0)
@@ -103,17 +106,23 @@ def convert(pdf_file_path,output_dir):
         logging.error(f"Error processing {pdf_file_path}: {e}")
         return None
 
-def collect_all_target_pdf(base_path,output_dir,tag_name):
-    
-    os.makedirs(base_path,exist_ok=True)
-    os.makedirs(output_dir,exist_ok=True)
-    all_pdf_files = glob(base_path + '/*/*.pdf')
+def collect_all_target_pdf():
+    all_pdf_files = glob(os.path.join(base_path, '*.pdf'))
+    print(f"Found {len(all_pdf_files)} PDF files.")
+    if not all_pdf_files:
+        print("No PDF files found. Please check the base_path and file structure.")
+
+    # for root, dirs, files in os.walk(base_path):
+    #     print(f"Checking directory: {root}")
+    #     for file in files:
+    #         if file.endswith('.pdf'):
+    #             print(f"Found PDF file: {os.path.join(root, file)}")
+
     markdown_files_info = []
 
-    # 使用 ThreadPoolExecutor 进行并行处理
-    max_workers = 1  # 设置最大线程数
+    max_workers = 1
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = {executor.submit(convert, pdf_file,output_dir): pdf_file for pdf_file in all_pdf_files}
+        futures = {executor.submit(convert, pdf_file): pdf_file for pdf_file in all_pdf_files}
         for future in tqdm(concurrent.futures.as_completed(futures), total=len(all_pdf_files)):
             try:
                 result = future.result()
@@ -122,22 +131,8 @@ def collect_all_target_pdf(base_path,output_dir,tag_name):
             except Exception as e:
                 logging.error(f"Error in future result: {e}")
 
-    # 将所有Markdown文件的信息写入result.json文件
-    with open(os.path.join(BASE_OUTPUT_PATH,f'result_{tag_name}.json'), 'w') as f:
+    with open('result.json', 'w') as f:
         json.dump(markdown_files_info, f, ensure_ascii=False, indent=4)
 
 if __name__ == '__main__':
-'''
-    sub_dir_names = []
-
-    glob(os.path.join())
-
-    for sub_dir_name in sub_dir_names:
-        logger.info(f'sub_dir is {sub_dir_name}')
-        base_path = os.path.join(BASE_INPUT_PATH,sub_dir_name)
-        output_dir = os.path.join(BASE_OUTPUT_PATH,sub_dir_name)
-        logger.info(f'input_dir is {base_path}')
-        logger.info(f'output_dir is {output_dir}')
-        collect_all_target_pdf(base_path,output_dir,sub_dir_name)
-'''
     collect_all_target_pdf()
