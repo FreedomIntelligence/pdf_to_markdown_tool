@@ -70,13 +70,12 @@ def convert(pdf_file_path):
         
         markdown_file_path = os.path.join(output_folder, fname + '.md')
         
-        # 保存Markdown文件
-        with open(markdown_file_path, 'w') as f:
-            f.write(full_text)
-        
-        # 保存图像
-        for i, image in enumerate(doc_images.values()):
-            image_path = os.path.join(output_folder, f'image_{i}.png')
+        # 保存图像并记录名称
+        image_names = {}
+        for i, (image_name, image) in enumerate(doc_images.items()):
+            image_file_name = f'image_{i}.png'
+            image_names[image_name] = image_file_name
+            image_path = os.path.join(output_folder, image_file_name)
             
             if isinstance(image, Image.Image):
                 image.save(image_path)
@@ -86,6 +85,14 @@ def convert(pdf_file_path):
                     img_f.write(image_data)
             else:
                 raise TypeError("Unsupported image type")
+        
+        # 更新Markdown中的图片路径
+        for original_path, image_file_name in image_names.items():
+            full_text = full_text.replace(original_path, image_file_name)
+        
+        # 保存Markdown文件
+        with open(markdown_file_path, 'w') as f:
+            f.write(full_text)
         
         # 保存元数据
         meta_file_path = os.path.join(output_folder, f'{fname}_meta.json')
@@ -111,12 +118,6 @@ def collect_all_target_pdf():
     print(f"Found {len(all_pdf_files)} PDF files.")
     if not all_pdf_files:
         print("No PDF files found. Please check the base_path and file structure.")
-
-    # for root, dirs, files in os.walk(base_path):
-    #     print(f"Checking directory: {root}")
-    #     for file in files:
-    #         if file.endswith('.pdf'):
-    #             print(f"Found PDF file: {os.path.join(root, file)}")
 
     markdown_files_info = []
 
